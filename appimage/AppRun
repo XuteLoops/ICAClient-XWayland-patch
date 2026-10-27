@@ -1,0 +1,145 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [[ -n "${APPDIR:-}" ]]; then
+    APPDIR="$(cd -- "$APPDIR" && pwd)"
+else
+    APPDIR="$(cd -- "$(dirname -- "$(readlink -f -- "${BASH_SOURCE[0]}")")" && pwd)"
+fi
+
+ICAROOT="$APPDIR/opt/Citrix/ICAClient"
+PWD_BEFORE="$PWD"
+
+resolve_path() {
+    case "$1" in
+        /*) printf '%s\n' "$1" ;;
+        *) printf '%s/%s\n' "$PWD_BEFORE" "$1" ;;
+    esac
+}
+
+auto_integrate() {
+    if [[ "${CITRIX_APPIMAGE_NO_INTEGRATE:-0}" == "1" ]]; then
+        return 0
+    fi
+
+    local target="${APPIMAGE:-$APPDIR/AppRun}"
+    target="$(readlink -f -- "$target" 2>/dev/null || printf '%s' "$target")"
+    local state="${XDG_CONFIG_HOME:-$HOME/.config}/citrix-workspace-appimage"
+    local marker="$state/integrated-target"
+    local apps="${XDG_DATA_HOME:-$HOME/.local/share}/applications"
+
+    if [[ -f "$marker" && "$(<"$marker")" == "$target" && -f "$apps/citrix-wfica.desktop" ]]; then
+        return 0
+    fi
+
+    "$APPDIR/integrate.sh" >/dev/null 2>&1 || true
+}
+
+export APPDIR
+export ICAROOT
+export GDK_BACKEND="${CITRIX_GDK_BACKEND:-x11}"
+export WEBKIT_EXEC_PATH="$APPDIR/usr/lib/x86_64-linux-gnu/webkit2gtk-4.0"
+export WEBKIT_INJECTED_BUNDLE_PATH="$APPDIR/usr/lib/x86_64-linux-gnu/webkit2gtk-4.0/injected-bundle"
+export WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS=1
+export LD_LIBRARY_PATH="$APPDIR/usr/lib/x86_64-linux-gnu:$ICAROOT/lib:$ICAROOT${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+export XDG_DATA_DIRS="$APPDIR/usr/share:${XDG_DATA_DIRS:-/usr/local/share:/usr/share}"
+export PATH="$ICAROOT:$ICAROOT/util:$PATH"
+
+cd "$APPDIR"
+
+mode="selfservice"
+args=()
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --selfservice|--receiver|--configmgr|--conncenter|--wfica|--new-store)
+            mode="${1#--}"
+            shift
+            break
+            ;;
+        --integrate)
+            exec "$APPDIR/integrate.sh"
+            ;;
+        --install-usb)
+            shift
+            exec "$APPDIR/install-usb.sh" "$@"
+            ;;
+        --diagnose)
+            exec "$APPDIR/diagnose.sh"
+            ;;
+        --help|-h)
+            cat <<EOF
+Citrix Workspace 26.04.10.1 AppImage
+
+Usage:
+  $0 [--selfservice|--receiver|--configmgr|--conncenter|--wfica|--new-store] [args...]
+  $0 --integrate
+  $0 --install-usb
+  $0 --diagnose
+
+Without a mode, selfservice is started. The client is forced onto the X11
+GDK backend so it runs through XWayland on Wayland desktops. To override for
+experiments, set CITRIX_GDK_BACKEND (for example: CITRIX_GDK_BACKEND=wayland).
+
+Desktop integration (launcher, .ica association, and Citrix URL handlers) is
+installed on first GUI launch and refreshed if the AppImage moves. Set
+CITRIX_APPIMAGE_NO_INTEGRATE=1 to disable it. USB redirection is not installed
+automatically; use --install-usb for that.
+EOF
+            exit 0
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            break
+            ;;
+    esac
+done
+
+for arg in "$@"; do
+    case "$mode" in
+        wfica|new-store)
+            if [[ -f "$arg" ]]; then
+                args+=("$(resolve_path "$arg")")
+            else
+                args+=("$arg")
+            fi
+            ;;
+        *)
+            args+=("$arg")
+            ;;
+    esac
+done
+
+case "$mode" in
+    selfservice|wfica|receiver|new-store)
+        auto_integrate
+        ;;
+esac
+
+case "$mode" in
+    selfservice)
+        exec "$ICAROOT/selfservice" --icaroot "$ICAROOT" "${args[@]}"
+        ;;
+    wfica)
+        exec "$ICAROOT/wfica" -icaroot "$ICAROOT" "${args[@]}"
+        ;;
+    configmgr)
+        exec "$ICAROOT/util/configmgr" -icaroot "$ICAROOT" "${args[@]}"
+        ;;
+    conncenter)
+        exec "$ICAROOT/util/conncenter" -icaroot "$ICAROOT" "${args[@]}"
+        ;;
+    receiver)
+        exec "$ICAROOT/util/ctxwebhelper" "${args[@]}"
+        ;;
+    new-store)
+        exec "$ICAROOT/util/new_store" -icaroot "$ICAROOT" "${args[@]}"
+        ;;
+    *)
+        printf 'Unknown mode: %s\n' "$mode" >&2
+        exit 2
+        ;;
+esac

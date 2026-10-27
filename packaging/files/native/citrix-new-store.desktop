@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Citrix Workspace Store Setup
+Exec=/usr/bin/citrix-workspace --new-store %f
+TryExec=/usr/bin/citrix-workspace
+Icon=citrix-workspace
+Terminal=false
+NoDisplay=true
+MimeType=application/vnd.citrix.receiver.configure;
+Categories=Network;

@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Citrix Workspace Configuration Manager
+Exec=/usr/bin/citrix-workspace --configmgr
+TryExec=/usr/bin/citrix-workspace
+Icon=citrix-workspace
+Terminal=false
+NoDisplay=true
+Categories=Network;

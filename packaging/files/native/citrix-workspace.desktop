@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Citrix Workspace
+Comment=Access virtual apps and desktops
+Exec=/usr/bin/citrix-workspace --selfservice
+TryExec=/usr/bin/citrix-workspace
+Icon=citrix-workspace
+Terminal=false
+Categories=Network;
+StartupNotify=true

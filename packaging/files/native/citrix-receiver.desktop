@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Citrix Workspace Receiver
+Exec=/usr/bin/citrix-workspace --receiver %u
+TryExec=/usr/bin/citrix-workspace
+Icon=citrix-workspace
+Terminal=false
+NoDisplay=true
+MimeType=x-scheme-handler/receiver;
+Categories=Network;

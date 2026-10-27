@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Citrix Workspace Web Helper
+Exec=/usr/bin/citrix-workspace --receiver %u
+TryExec=/usr/bin/citrix-workspace
+Icon=citrix-workspace
+Terminal=false
+NoDisplay=true
+MimeType=x-scheme-handler/citrixweb;x-scheme-handler/ctxaadsso;x-scheme-handler/citrixauthwebviewdone;x-scheme-handler/ctxlinuxamloauth;
+Categories=Network;

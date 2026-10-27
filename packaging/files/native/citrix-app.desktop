@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=Citrix Workspace Application Launcher
+Exec=/usr/bin/citrix-workspace --selfservice %u
+TryExec=/usr/bin/citrix-workspace
+Icon=citrix-workspace
+Terminal=false
+NoDisplay=true
+MimeType=x-scheme-handler/citrixapp;
+Categories=Network;
+StartupNotify=true

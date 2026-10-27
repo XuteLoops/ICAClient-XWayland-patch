@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+Name=Citrix Workspace Engine
+Exec=/usr/bin/citrix-workspace --wfica %f
+TryExec=/usr/bin/citrix-workspace
+Icon=citrix-workspace
+Terminal=false
+NoDisplay=true
+MimeType=application/x-ica;
+Categories=Network;
+StartupNotify=true
+StartupWMClass=Wfica

@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Citrix Workspace
+Comment=Access virtual apps and desktops
+Exec=citrix-workspace %U
+Icon=io.github.citrixworkspace.CitrixWorkspace
+Terminal=false
+Categories=Network;
+StartupNotify=true
+MimeType=application/x-ica;application/vnd.citrix.receiver.configure;x-scheme-handler/citrixapp;x-scheme-handler/receiver;x-scheme-handler/citrixweb;x-scheme-handler/ctxaadsso;x-scheme-handler/citrixauthwebviewdone;x-scheme-handler/ctxlinuxamloauth;

@@ -1,0 +1,9 @@
+[Default Applications]
+application/x-ica=citrix-wfica.desktop
+application/vnd.citrix.receiver.configure=citrix-new-store.desktop
+x-scheme-handler/citrixapp=citrix-app.desktop
+x-scheme-handler/receiver=citrix-receiver.desktop
+x-scheme-handler/citrixweb=citrix-webhelper.desktop
+x-scheme-handler/ctxaadsso=citrix-webhelper.desktop
+x-scheme-handler/citrixauthwebviewdone=citrix-webhelper.desktop
+x-scheme-handler/ctxlinuxamloauth=citrix-webhelper.desktop

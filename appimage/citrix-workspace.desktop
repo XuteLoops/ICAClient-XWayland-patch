@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Citrix Workspace
+Comment=Access virtual apps and desktops
+Exec=AppRun --selfservice
+Icon=citrix-workspace
+Terminal=false
+Categories=Network;
+StartupNotify=true
